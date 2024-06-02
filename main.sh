@@ -113,6 +113,7 @@ do
     echo "Installing Terminator"
     sudo apt install terminator -y
     favoritesToUpdate+=", 'terminator.desktop'"
+    cp -r ./terminator/ ~/.config/
     ;;
   esac
 done
