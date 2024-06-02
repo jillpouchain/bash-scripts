@@ -57,7 +57,8 @@ do
     "Chrome")
     echo "Installing Google Chrome"
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo dpkg -i google-chrome-stable_current_amd64.deb
+    sudo apt install ./google-chrome-stable_current_amd64.deb
+    # OR `sudo dpkg -i google-chrome-stable_current_amd64.deb`
     rm google-chrome-stable_current_amd64.deb
     favoritesToUpdate+=", 'google-chrome.desktop'"
     ;;
@@ -81,7 +82,7 @@ read -p "Press <enter> key..."
 echo ""
 
 # Utilities
-OPTIONS_VALUES_UTILITIES=("LibreOffice" "Terminator")
+OPTIONS_VALUES_UTILITIES=("Bitwarden" "Joplin" "LibreOffice" "Shutter" "Slack" "Spotify" "Terminator")
 
 for i in "${!OPTIONS_VALUES_UTILITIES[@]}"; do
   OPTIONS_STRING_UTILITIES+="${OPTIONS_VALUES_UTILITIES[$i]};"
@@ -103,10 +104,44 @@ done
 for utilities in "${CHECKED_UTILITIES[@]}"
 do
   case $utilities in
+    "Bitwarden")
+    echo "Installing Bitwarden"
+    sudo snap install bitwarden
+    favoritesToUpdate+=", 'bitwarden_bitwarden.desktop'"
+    ;;
+
+    "Joplin")
+    echo "Installing Joplin"
+    wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
+    favoritesToUpdate+=", 'appimagekit-joplin.desktop'"
+    ;;
+
     "LibreOffice")
     echo "Installing LibreOffice"
     sudo apt install libreoffice-gnome libreoffice -y
     favoritesToUpdate+=", 'libreoffice-calc.desktop', 'libreoffice-writer.desktop'"
+    ;;
+
+    "Shutter")
+    echo "Installing Shutter"
+    sudo add-apt-repository ppa:shutter/ppa -y
+    sudo apt install shutter -y
+    favoritesToUpdate+=", 'shutter.desktop'"
+    ;;
+
+    "Slack")
+    echo "Installing Slack"
+    wget https://downloads.slack-edge.com/desktop-releases/linux/x64/4.38.125/slack-desktop-4.38.125-amd64.deb
+    sudo apt install ./slack-desktop-4.38.125-amd64.deb
+    # OR `sudo dpkg -i slack-desktop-4.38.125-amd64.deb`
+    rm slack-desktop-4.38.125-amd64.deb
+    favoritesToUpdate+=", 'slack.desktop'"
+    ;;
+
+    "Spotify")
+    echo "Installing Spotify"
+    snap install spotify
+    favoritesToUpdate+=", 'spotify_spotify.desktop'"
     ;;
 
     "Terminator")
@@ -166,6 +201,8 @@ echo ""
 # Configuration
 
 # Git
+git config credential.helper store
+git config credential.helper 'cache --timeout 43200' # 12h
 git config --global user.name $gitName
 git config --global user.email $gitEmail
 git config --global credential.username $gitUsername
