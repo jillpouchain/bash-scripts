@@ -27,8 +27,8 @@ git clone git@github.com:jillpouchain/bash-scripts.git
 # 4. Go into the repo
 cd bash-scripts
 
-# 5. Launch main script
-./main.sh
+# 5. Launch install script
+./install.sh
 ```
 
 ## What are each file for ?
@@ -45,7 +45,7 @@ Colors variables for me to use in the terminal.
 
 Functions I find useful in my scripts.
 
-### main.sh
+### install.sh
 
-This is the main script and is used after a fresh install of Ubuntu. It will prompt the user the installation of multiple softwares and add them in the favorites bar.
+This is the installation script and is used after a fresh install of Ubuntu. It will prompt the user the installation of multiple softwares and add them in the favorites bar.
 This was tested on Ubuntu 20.04.
