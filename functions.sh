@@ -3,64 +3,98 @@
 # Imports
 . ~/dev/bash-scripts/colors.sh
 
-# LOGS THE COMMAND USED MESSAGE IN TERMINAL
-# Arguments:
-#   $1 - Message. Mandatory.
-logCommandToBeUsed() {
-  if [ "$1" == "" ]; then
-    logError "Missing parameter"
+# Shows list of GIT branches with their description
+gitBranch() {
+  if [ "$1" == "--help" ]; then
+    helpLogCommand "gitbranch ${BG_BLUE}<NO ARGUMENTS>${RESET}"
+    helpLogDescription "Shows list of GIT branches with their description"
+    helpLogArgumentNone
+    echo ""
   else
-    echo -e "${B_BLUE}The command that will be used is:${RESET} ${BG_BLUE}$1${RESET}"
+    current_branch=$(git branch --show-current)
+    list_of_branches=$(git for-each-ref --format='%(refname)' refs/heads/ | sed 's|refs/heads/||')
+    for branch in $list_of_branches; do
+      description=$(git config branch.$branch.description)
+      if [ $branch == $current_branch ]; then
+        branch="$BLACK_AND_WHITE $branch ${RESET}"
+      else
+        branch="${DIM_WHITE}$branch${RESET}"
+      fi
+      echo -e "    $branch\t $description${RESET}"
+    done
   fi
 }
 
-# DISPLAYS A MESSAGE IN RED IN THE TERMINAL
+# Unstashes the stash in the argument
+gitPop() {
+  # --help
+  if [ "$1" == "--help" ]; then
+    helpLogCommand "gitpop ${BG_BLUE}<STASH>${RESET}"
+    helpLogDescription "Unstashes the stash in the argument"
+    helpLogArgumentHeader
+    helpLogArgumentRow "STASH" "optional" "number-ish" "0" "'0', '1', '2', ..."
+    echo ""
+  elif [ "$1" == "" ]; then
+    logCommandUsed "git stash pop"
+    git stash pop
+  else
+    logCommandUsed "git stash pop stash@{$1}"
+    git stash pop stash@{$1}
+  fi
+}
+
+# Help command - header of the arguments table
+helpLogArgumentHeader() {
+  printf "\t${B_BLUE}%-12s${RESET} %-15s %-15s %-15s %-20s %-50s\n" "Arguments:" "Variable" "Necessity" "Type" "Default value" "Possible values"
+  printf "%21s%-15s %-15s %-15s %-20s %-50s\n" "" "---------------" "---------------" "---------------" "--------------------" "--------------------------------------------------"
+}
+
+# Help command - no arguments
+helpLogArgumentNone() {
+  printf "\t${B_BLUE}%-12s${RESET} %-15s\n" "Arguments:" "-"
+}
+
+# Help command - row of the arguments table
+helpLogArgumentRow() {
+  printf "%21s%-15s %-15s %-15s %-20s %-50s\n" "" "$1" "$2" "$3" "$4" "$5"
+}
+
+# Help command - command
+helpLogCommand() {
+  echo ""
+  printf "\t${B_BLUE}%-13s${RESET}" "Command:"
+  printf "$1\n"
+  echo ""
+}
+
+# Help command - description
+helpLogDescription() {
+  echo -e "\t${B_BLUE}Description:${RESET} $1"
+  echo ""
+}
+
+# Displays a red message to indicate an error
 # Arguments:
 #   $1 - Message. Mandatory.
 logError() {
-  if [ "$1" == "" ]; then
-    logError "Missing parameter"
-  else
-    echo -e "${B_RED}$1${RESET}"
-  fi
+  echo -e "${B_RED}$1${RESET}"
 }
 
-# LOGS A HELP MESSAGE IN TERMINAL
-# Arguments:
-#   $1 - Message. Mandatory.
-logHelp() {
-  if [ "$1" == "" ]; then
-    logError "Missing parameter"
-  else
-    echo ""
-    echo -e "    $1"
-    echo ""
-  fi
-}
-
-# DISPLAYS A MESSAGE IN BLUE IN THE TERMINAL
+# Displays a message in blue to indicate an information
 # Arguments:
 #   $1 - Message. Mandatory.
 logInformation() {
-  if [ "$1" == "" ]; then
-    logError "Missing parameter"
-  else
-    echo -e "${B_BLUE}$1${RESET}"
-  fi
+  echo -e "${B_BLUE}$1${RESET}"
 }
 
-# DISPLAYS A MESSAGE IN YELLOW IN THE TERMINAL
+# Displays a message in yellow to indicate a warning
 # Arguments:
 #   $1 - Message. Mandatory.
 logWarning() {
-  if [ "$1" == "" ]; then
-    logError "Missing parameter"
-  else
-    echo -e "${B_YELLOW}WARNING: $1${RESET}"
-  fi
+  echo -e "${B_YELLOW}WARNING: $1${RESET}"
 }
 
-# PROMPTS USER TO CHOSE AMONG MULTIPLE OPTIONS
+# Prompts user to chose among multiple options
 # From Stackoverflow: https://stackoverflow.com/a/54261882/317605
 promptForMultiselect() {
     ESC=$( printf "\033")
