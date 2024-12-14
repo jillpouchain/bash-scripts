@@ -26,7 +26,7 @@ read -p "What is your GIT username ? (Example: jsmith) " gitUsername
 sudo apt update ; sudo apt full-upgrade -y ; sudo apt autoremove --purge -y ; sudo apt clean -y
 
 # Installing tools
-sudo apt install curl net-tools gdebi gparted unrar nodejs npm vim neovim apache2 -y
+sudo apt install curl net-tools gdebi gparted unrar nodejs npm vim neovim apache2 libfuse2 -y
 echo ""
 read -p "Press <enter> key..."
 echo ""
