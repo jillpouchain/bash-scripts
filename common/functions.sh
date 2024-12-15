@@ -1,24 +1,74 @@
 #!/bin/bash
 
 # Imports
-. ~/dev/bash-scripts/colors.sh
+. ~/dev/bash-scripts/common/colors.sh
+
+# Displays a red message to indicate an error
+# Arguments:
+#   $1 - Message. Mandatory.
+logError() {
+  printf "${RED_TEXT}%s${RESET}\n" "$1"
+}
+
+# Displays a message in blue to indicate an information
+# Arguments:
+#   $1 - Message. Mandatory.
+logInformation() {
+  printf "${BLUE_TEXT}%s${RESET}\n" "$1"
+}
+
+# Displays a message in yellow to indicate a warning
+# Arguments:
+#   $1 - Message. Mandatory.
+logWarning() {
+  printf "${YELLOW_TEXT}%s${RESET}\n" "WARNING: $1"
+}
+
+# Help command - command
+helpLogCommand() {
+  printf "\n\t${BLUE_BOLD_TEXT}%-14s${RESET} %s" "Command:"
+  printf "$1\n"
+}
+
+# Help command - description
+helpLogDescription() {
+  printf "\n\t${BLUE_BOLD_TEXT}%-15s${RESET}" "Description:"
+  printf "$1\n"
+}
+
+# Help command - no arguments
+helpLogArgumentNone() {
+  printf "\n\t${BLUE_BOLD_TEXT}%-15s${RESET}" "Arguments:"
+  printf -- "-\n"
+}
+
+# Help command - header of the arguments table
+helpLogArgumentHeader() {
+  printf "\n\t${BLUE_BOLD_TEXT}%-14s${RESET} %-15s %-15s %-15s %-20s %-50s\n" "Arguments:" "Variable" "Necessity" "Type" "Default value" "Possible values"
+  printf "\t%14s %-15s %-15s %-15s %-20s %-50s\n" "" "---------------" "---------------" "---------------" "--------------------" "--------------------------------------------------"
+}
+
+# Help command - row of the arguments table
+helpLogArgumentRow() {
+  printf "\t%14s %-15s %-15s %-15s %-20s %-50s\n" "" "$1" "$2" "$3" "$4" "$5"
+}
 
 # Shows list of GIT branches with their description
 gitBranch() {
   if [ "$1" == "--help" ]; then
-    helpLogCommand "gitbranch ${BG_BLUE}<NO ARGUMENTS>${RESET}"
+    helpLogCommand "gitbranch ${WHITE_TEXT_ON_BLUE_BACKGROUND}<NO ARGUMENTS>${RESET}"
     helpLogDescription "Shows list of GIT branches with their description"
     helpLogArgumentNone
-    echo ""
+    printf "\n"
   else
     current_branch=$(git branch --show-current)
-    list_of_branches=$(git for-each-ref --format='%(refname)' refs/heads/ | sed 's|refs/heads/||')
+    list_of_branches=$(git branch | sed 's/^\* //' | sort)
     for branch in $list_of_branches; do
       description=$(git config branch.$branch.description)
       if [ $branch == $current_branch ]; then
-        branch="$BLACK_AND_WHITE $branch ${RESET}"
+        branch="${BLACK_TEXT_ON_WHITE_BACKGROUND} $branch ${RESET}"
       else
-        branch="${DIM_WHITE}$branch${RESET}"
+        branch="${DIM_WHITE_TEXT}$branch${RESET}"
       fi
       echo -e "    $branch\t $description${RESET}"
     done
@@ -29,11 +79,11 @@ gitBranch() {
 gitPop() {
   # --help
   if [ "$1" == "--help" ]; then
-    helpLogCommand "gitpop ${BG_BLUE}<STASH>${RESET}"
+    helpLogCommand "gitpop ${WHITE_TEXT_ON_BLUE_BACKGROUND}<STASH>${RESET}"
     helpLogDescription "Unstashes the stash in the argument"
     helpLogArgumentHeader
     helpLogArgumentRow "STASH" "optional" "number-ish" "0" "'0', '1', '2', ..."
-    echo ""
+    printf "\n"
   elif [ "$1" == "" ]; then
     logCommandUsed "git stash pop"
     git stash pop
@@ -43,60 +93,21 @@ gitPop() {
   fi
 }
 
-# Help command - header of the arguments table
-helpLogArgumentHeader() {
-  printf "\t${B_BLUE}%-12s${RESET} %-15s %-15s %-15s %-20s %-50s\n" "Arguments:" "Variable" "Necessity" "Type" "Default value" "Possible values"
-  printf "%21s%-15s %-15s %-15s %-20s %-50s\n" "" "---------------" "---------------" "---------------" "--------------------" "--------------------------------------------------"
+# Displays the message "press enter key"
+pressEnterKey() {
+  printf "${BLUE_TEXT}1. Press <enter> key...${RESET}"
+  read
 }
 
-# Help command - no arguments
-helpLogArgumentNone() {
-  printf "\t${B_BLUE}%-12s${RESET} %-15s\n" "Arguments:" "-"
-}
-
-# Help command - row of the arguments table
-helpLogArgumentRow() {
-  printf "%21s%-15s %-15s %-15s %-20s %-50s\n" "" "$1" "$2" "$3" "$4" "$5"
-}
-
-# Help command - command
-helpLogCommand() {
-  echo ""
-  printf "\t${B_BLUE}%-13s${RESET}" "Command:"
-  printf "$1\n"
-  echo ""
-}
-
-# Help command - description
-helpLogDescription() {
-  echo -e "\t${B_BLUE}Description:${RESET} $1"
-  echo ""
-}
-
-# Displays a red message to indicate an error
-# Arguments:
-#   $1 - Message. Mandatory.
-logError() {
-  echo -e "${B_RED}$1${RESET}"
-}
-
-# Displays a message in blue to indicate an information
-# Arguments:
-#   $1 - Message. Mandatory.
-logInformation() {
-  echo -e "${B_BLUE}$1${RESET}"
-}
-
-# Displays a message in yellow to indicate a warning
-# Arguments:
-#   $1 - Message. Mandatory.
-logWarning() {
-  echo -e "${B_YELLOW}WARNING: $1${RESET}"
+# Displays the instructions for the multiselect prompt
+displayInstructionsForMultiSelectPrompt() {
+  printf "You can move with ↑ and ↓. To validate an option, press <space>. Press <enter> once your selection is complete.\n\n"
+  printf "Select the %s you wish to install:\n" "$1"
 }
 
 # Prompts user to chose among multiple options
 # From Stackoverflow: https://stackoverflow.com/a/54261882/317605
-promptForMultiselect() {
+multiSelectPrompt() {
     ESC=$( printf "\033")
     cursor_blink_on()   { printf "$ESC[?25h"; }
     cursor_blink_off()  { printf "$ESC[?25l"; }
