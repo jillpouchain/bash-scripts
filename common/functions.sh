@@ -5,21 +5,21 @@
 
 # Displays a red message to indicate an error
 # Arguments:
-#   $1 - Message. Mandatory.
+#   $1 - Message (mandatory)
 logError() {
   printf "${RED_TEXT}%s${RESET}\n" "$1"
 }
 
-# Displays a message in blue to indicate an information
+# Displays a blue message to indicate an information
 # Arguments:
-#   $1 - Message. Mandatory.
+#   $1 - Message (mandatory)
 logInformation() {
   printf "${BLUE_TEXT}%s${RESET}\n" "$1"
 }
 
-# Displays a message in yellow to indicate a warning
+# Displays a yellow message to indicate a warning
 # Arguments:
-#   $1 - Message. Mandatory.
+#   $1 - Message (mandatory)
 logWarning() {
   printf "${YELLOW_TEXT}%s${RESET}\n" "WARNING: $1"
 }
@@ -95,14 +95,33 @@ gitPop() {
 
 # Displays the message "press enter key"
 pressEnterKey() {
-  printf "${BLUE_TEXT}1. Press <enter> key...${RESET}"
+  printf "${BLUE_TEXT}Press <enter> key...${RESET}"
   read
 }
 
-# Displays the instructions for the multiselect prompt
-displayInstructionsForMultiSelectPrompt() {
-  printf "You can move with ↑ and ↓. To validate an option, press <space>. Press <enter> once your selection is complete.\n\n"
-  printf "Select the %s you wish to install:\n" "$1"
+# Arguments:
+#   $1 - option `--hard` (optional)
+MiseAJour() {
+  # logInformation "sudo apt update" && sudo apt update && \
+  # logInformation "sudo apt upgrade" && sudo apt upgrade -y && \
+  # logInformation "sudo apt autoremove" && sudo apt autoremove -y
+
+  logInformation "sudo apt update"
+  sudo apt update
+
+  if [ "$1" == "--hard" ]; then
+    logInformation "sudo apt full-upgrade -y" && \
+    sudo apt full-upgrade -y && \
+    logInformation "sudo apt autoremove --purge -y" && \
+    sudo apt autoremove --purge -y && \
+    logInformation "sudo apt clean -y" && \
+    sudo apt clean -y
+  else
+    logInformation "sudo apt upgrade -y" && \
+    sudo apt upgrade -y && \
+    logInformation "sudo apt autoremove" && \
+    sudo apt autoremove -y
+  fi
 }
 
 # Prompts user to chose among multiple options

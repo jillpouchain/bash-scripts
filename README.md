@@ -15,7 +15,7 @@ If you want to use the repo as is, I would recommend you to do the following:
 # 1. Install GIT
 sudo apt install git-all
 
-# 2. I have based the repo to be installed in `~/dev/` so all of my scripts will point to that folder. If you don't already have one, I invite you to create a `dev` folder and go to it
+# 2. I made a habit of having a `dev` folder and install all repos in it so all of my scripts will point to that folder
 mkdir ~/dev && cd ~/dev
 
 # 3. Clone this repo
@@ -28,12 +28,12 @@ git clone git@github.com:jillpouchain/bash-scripts.git
 cd bash-scripts
 
 # 5. Launch install script
-./install.sh
+./interactive_install.sh
 ```
 
 ## What are each file for ?
 
-### bash_alias.sh
+### .bash_alias.sh
 
 This is the file where I wrote my bash aliases.
 
@@ -45,7 +45,6 @@ Colors variables for me to use in the terminal.
 
 Functions I find useful in my scripts.
 
-### install.sh
+### interactive_install.sh
 
-This is the installation script and is used after a fresh install of Ubuntu. It will prompt the user the installation of multiple softwares and add them in the favorites bar.
-This was tested on Ubuntu 20.04.
+This is the interactive installation script and is used after a fresh install of Ubuntu. It will prompt the user the installation of multiple softwares and add them in the favorites bar.

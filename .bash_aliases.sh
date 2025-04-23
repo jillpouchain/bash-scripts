@@ -1,12 +1,10 @@
 #!/bin/bash
 
 # Imports
-. ~/dev/bash-scripts/functions.sh
+. ~/dev/bash-scripts/common/functions.sh
 
 # Aliases
-alias miseajour='logInformation "sudo apt update" && sudo apt update && \
-  logInformation "sudo apt upgrade" && sudo apt upgrade -y && \
-  logInformation "sudo apt autoremove" && sudo apt autoremove -y'
+alias miseajour='MiseAJour'
 alias please='sudo'
 alias reloadbashrc='logInformation "source ~/.bashrc" && source ~/.bashrc'
 
